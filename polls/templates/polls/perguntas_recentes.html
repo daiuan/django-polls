@@ -1,11 +1,11 @@
 {% extends 'polls/_basico.html' %} <!-- herda tudo que já tem em _layout1.html -->
 
 {% block head_title %}
-    Mega Enquetes
+Mega Enquetes
 {% endblock %}
 
 {% block main %} <!-- substitui o bloco content em _layout1.html -->
-    <h1>Nossas últimas Enquetes</h1>
+<h1>Nossas últimas Enquetes</h1>
 {% for question in latest_question_list %}
 <article>
     <h2>Em: {{ question.pub_date|date:"d / m / Y" }}</h2>
@@ -13,7 +13,11 @@
 </article>
 <a href="{% url 'poll_edit' pk=question.id %}" class="link-secondary">
     Editar
-    </a>
+</a>
+<a href="{% url 'poll_delete' pk=question.id %}" class="link-secondary">
+    Excluir
+</a>
+
 {% endfor %}
 
 <a href="{% url 'poll_add' %}" class="btn btn-lg btn-primary font-weight-bold">

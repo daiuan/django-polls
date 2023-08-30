@@ -32,7 +32,7 @@ def ultimas_perguntas(request):
 def vote(request, question_id):
     return HttpResponse(f"Você vai votar na pergunta ")
 
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
 class QuestionCreateView(CreateView):
@@ -45,9 +45,6 @@ class QuestionCreateView(CreateView):
         context['form_title'] = 'Criando uma pergunta'
         return context
 
-
-from django.views.generic.edit import CreateView, UpdateView
-
 class QuestionUpdateView(UpdateView):
     model = Question
     template_name = 'polls/question_form.html'
@@ -58,3 +55,7 @@ class QuestionUpdateView(UpdateView):
         context['form_title'] = 'Editando a pergunta'
         return context
 
+class QuestionDeleteView(DeleteView):
+    model = Question
+    template_name = 'polls/question_confirm_delete_form.html'
+    success_url = reverse_lazy('polls_list')
