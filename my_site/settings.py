@@ -1,4 +1,5 @@
 import os # Acrescentar no topo do arquivo, na primeira linha
+from django.contrib.messages import constants as messages
 """
 Django settings for my_site project.
 
@@ -138,3 +139,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+MESSAGE_TAGS = {
+messages.DEBUG: 'alert-secondary',
+messages.INFO: 'alert-info',
+messages.SUCCESS: 'alert-success',
+messages.WARNING: 'alert-warning',
+messages.ERROR: 'alert-danger',
+}

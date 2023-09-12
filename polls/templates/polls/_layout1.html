@@ -31,6 +31,7 @@ bg-white border-bottom shadow-sm">
 <div class="container">
     {% block content %}
     <p>Conteúdo padrão...</p>
+    {% include 'polls/messages.html' %}
     {% endblock content %}
 </div>
 {% endblock %}
