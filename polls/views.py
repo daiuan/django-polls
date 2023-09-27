@@ -13,7 +13,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 def index(request):
     context = {'titulo': 'Página Principal'}
-    return render(request, 'home.html', context)
+    return render(request, 'polls/home.html', context)
 
 @login_required
 def sobre(request):
