@@ -39,7 +39,7 @@ def vote(request, question_id):
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
-class QuestionCreateView(CreateView):
+class QuestionCreateView(LoginRequiredMixin, CreateView):
     model = Question
     template_name = 'polls/question_form.html'
     fields = ('question_text', 'pub_date', )
@@ -57,7 +57,13 @@ class QuestionUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(QuestionUpdateView, self).get_context_data(**kwargs)
         context['form_title'] = 'Editando a pergunta'
+
         return context
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        messages.success(self.request, self.success_message)
+        return super(QuestionCreateView, self).form_valid(form)
 
 class QuestionDeleteView(LoginRequiredMixin, DeleteView):
     model = Question
