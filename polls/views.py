@@ -1,15 +1,15 @@
-from django.shortcuts import render
+from typing import Any
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-
-# Create your views here.
-
 from polls.models import Question, Choice
 from django.http import HttpResponse
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-
-# Create your views here
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, ListView, TemplateView
+from django.contrib import messages
+from django.db.models import Sum
 
 def index(request):
     context = {'titulo': 'Página Principal'}
@@ -35,9 +35,6 @@ def ultimas_perguntas(request):
 
 def vote(request, question_id):
     return HttpResponse(f"Você vai votar na pergunta ")
-
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
 
 class QuestionCreateView(LoginRequiredMixin, CreateView):
     model = Question
@@ -73,15 +70,16 @@ class QuestionDeleteView(LoginRequiredMixin, DeleteView):
     def form_valid(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message)
         return super(QuestionDeleteView, self).form_valid(request, *args, **kwargs)
-
-
-
-from django.views.generic import DetailView, ListView, TemplateView
-
+    
 class QuestionDetailView(DetailView):
     model = Question
     template_name = 'polls/question_detail.html'
     context_object_name = 'question'
+
+    def get_context_data(self, **kwargs):
+        context = super(QuestionDetailView, self).get_context_data(**kwargs)
+        votes = Choice.objects.filter(question=context['question']).aggregate(total=sum('votes')) or 0
+        context['total_votes'] = votes.get('total')
 
 class QuestionListView(ListView):
     model = Question
@@ -93,7 +91,9 @@ class QuestionListView(ListView):
 class SobreTemplateView(TemplateView):
     template_name = 'polls/sobre.html'
 
-from django.contrib import messages
-
-
-
+def vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    if request.method == 'POST':
+        try:
+            selected_choice = question.choice_set.get(pk=request.POST["choice"])
+        except (KeyError, Choice.DoesNotExist):
